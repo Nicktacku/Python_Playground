@@ -128,67 +128,68 @@ def has_move(ph, pc):
     space_loc = 0
     ctr = 0
     print("played card in has move: ", pc)
-    for i in ph:
-        space_loc = 0
-        if "red" in pc:
-            if "red" in i:
-                ctr += 1
-                print("add 1 in red")
-
-        elif "blue" in pc:
-            if "blue" in i:
-                ctr += 1
-                print("add 1 in blue")
-
-        elif "green" in pc:
-            if "green" in i:
-                ctr += 1
-                print("add 1 in green")
-
-        elif "yellow" in pc:
-            if "yellow" in i:
-                ctr += 1
-                print("add 1 in yellow")
-
-        elif "skip" in pc:
-            # do a skip function
-            if "skip" in i:
-                ctr += 1
-                print("add 1 in skip")
-
-        elif "reverse" in pc:
-            # do a reverse function
-            if "reverse" in i:
-                ctr += 1
-                print("add 1 in skip")
-
-        elif "+2" in pc:
-            # do a reverse function
-            if "+2" in i:
-                ctr += 1
-                print("add 1 in +2")
-
-        elif i in black_cards:
-            ctr += 1
-            print("add 1 in wild card")
-
-        for j in range(10):
+    if pc is not None:
+        for i in ph:
+            space_loc = 0
             if "red" in pc:
-                space_loc = 8
-            elif "blue" in pc:
-                space_loc = 23
-            elif "green" or "yellow" in pc:
-                space_loc = 16
-            if str(j) in pc[space_loc:] and "+2" not in pc[space_loc:]:
                 if "red" in i:
-                    space_loc = 8
-                elif "blue" in i:
-                    space_loc = 23
-                elif "green" or "yellow" in i:
-                    space_loc = 16
-                if str(j) in i[space_loc:]:
                     ctr += 1
-                    print("add 1 in", str(j))
+                    print("add 1 in red")
+
+            elif "blue" in pc:
+                if "blue" in i:
+                    ctr += 1
+                    print("add 1 in blue")
+
+            elif "green" in pc:
+                if "green" in i:
+                    ctr += 1
+                    print("add 1 in green")
+
+            elif "yellow" in pc:
+                if "yellow" in i:
+                    ctr += 1
+                    print("add 1 in yellow")
+
+            elif "skip" in pc:
+                # do a skip function
+                if "skip" in i:
+                    ctr += 1
+                    print("add 1 in skip")
+
+            elif "reverse" in pc:
+                # do a reverse function
+                if "reverse" in i:
+                    ctr += 1
+                    print("add 1 in skip")
+
+            elif "+2" in pc:
+                # do a reverse function
+                if "+2" in i:
+                    ctr += 1
+                    print("add 1 in +2")
+
+            if i in black_cards:
+                ctr += 1
+                print("add 1 in wild card")
+
+            for j in range(10):
+                if "red" in pc:
+                    space_loc = 8
+                elif "blue" in pc:
+                    space_loc = 23
+                elif "green" or "yellow" in pc:
+                    space_loc = 16
+                if str(j) in pc[space_loc:] and "+2" not in pc[space_loc:]:
+                    if "red" in i:
+                        space_loc = 8
+                    elif "blue" in i:
+                        space_loc = 23
+                    elif "green" or "yellow" in i:
+                        space_loc = 16
+                    if str(j) in i[space_loc:]:
+                        ctr += 1
+                        print("add 1 in", str(j))
 
     if ctr > 0:
         return True
@@ -280,6 +281,14 @@ def opponent_move(hm, oh, pc):
                     print("greg move", played_card)
                     print("greg cards: ", len(player2_hand))
                     return i
+
+            if i in black_cards:
+                played_card = i
+                player2_hand.remove(i)
+                print("greg move", played_card)
+                print("greg cards: ", len(player2_hand))
+                return i
+                print("add 1 in wild card")
 
             for j in range(10):
                 if "red" in pc:
@@ -397,6 +406,7 @@ all_cards = cards.copy()
 
 # initialization
 played_card = draw()
+played_card_backup = played_card
 
 while played_card not in colored_cards:
     played_card = draw()
@@ -420,12 +430,20 @@ print("initial card: ", played_card)
 # player move
 show_current_hand()
 played_card = player_turn(has_move(player_hand, played_card), player_move, played_card)
+if played_card is None:
+    played_card = played_card_backup
 print(played_card)
 
 # opponent 2 move
 print(f"Greg cards: {len(player2_hand)}")
 if has_move(player2_hand, played_card):
     played_card = opponent_move(has_move, player2_hand, played_card)
+    if played_card is None:
+        played_card = played_card_backup
 else:
     player2_hand.append(draw())
+    for i in player2_hand:
+        if has_move(i, player2_hand):
+            played_card = player2_hand.pop()
+            print(played_card, "\n")
     print(f"Greg cards: {len(player2_hand)}")
