@@ -62,14 +62,21 @@ def number_comparer(pm, pc):
 
     # adds the space loc to move through the
     # initial numbers that messing the code
-    for i in range(len(pc)):
-        space_loc += 1
-        if " " == pc[i]:
-            break
-
     for i in range(10):
-        if str(i) in pc[space_loc:]:
-            return str(i) in pm[space_loc:]
+        if "red" in pc:
+            space_loc = 5
+        elif "blue" in pc:
+            space_loc = 18
+        elif "green" in pc or "yellow" in pc:
+            space_loc = 14
+        if str(i) in pc[space_loc:] and "+2" not in pc[space_loc:]:
+            if "red" in pm:
+                space_loc = 6
+            elif "blue" in pm:
+                space_loc = 18
+            elif "green" in pm or "yellow" in pm:
+                space_loc = 12
+            return str(i) in pm[space_loc:] and "+2" not in pm[space_loc:]
 
     if "skip" in pc:
         # do a skip function
@@ -87,11 +94,8 @@ def number_comparer(pm, pc):
 
 
 # player turn logic
-def player_turn(hm, pm, pc):
+def player_turn(hm, pm, pc, pcb):
     if hm:
-        move = input("Enter Move: ")
-        pm = player_hand[equivalent(move)]
-
         if color_comparer(pm, pc) or number_comparer(pm, pc):
             played_card = pm
             player_hand.remove(pm)
@@ -99,7 +103,7 @@ def player_turn(hm, pm, pc):
             show_current_hand()
             return pm
 
-        elif pm in black_cards:
+        elif pm in black_cards or pc in black_cards:
             played_card = pm
             player_hand.remove(pm)
             print(played_card)
@@ -107,12 +111,14 @@ def player_turn(hm, pm, pc):
             return pm
 
         else:
-            print("error")
+            print("card has no match")
+            return "mismatch"
     else:
         player_hand.append(draw())
-        if has_move(pm, pc):
+        if has_move(player_hand, pc):
             played_card = player_hand.pop()
             print(played_card, "\n")
+            return played_card
         show_current_hand()
 
 
@@ -127,139 +133,137 @@ def show_current_hand():
 def has_move(ph, pc):
     space_loc = 0
     ctr = 0
-    print("played card in has move: ", pc)
     if pc is not None:
         for i in ph:
             space_loc = 0
             if "red" in pc:
                 if "red" in i:
                     ctr += 1
-                    print("add 1 in red")
 
             elif "blue" in pc:
                 if "blue" in i:
                     ctr += 1
-                    print("add 1 in blue")
 
             elif "green" in pc:
                 if "green" in i:
                     ctr += 1
-                    print("add 1 in green")
 
             elif "yellow" in pc:
                 if "yellow" in i:
                     ctr += 1
-                    print("add 1 in yellow")
 
-            elif "skip" in pc:
+            if "skip" in pc:
                 # do a skip function
                 if "skip" in i:
                     ctr += 1
-                    print("add 1 in skip")
 
-            elif "reverse" in pc:
+            if "reverse" in pc:
                 # do a reverse function
                 if "reverse" in i:
                     ctr += 1
-                    print("add 1 in skip")
 
-            elif "+2" in pc:
+            if "+2" in pc:
                 # do a reverse function
                 if "+2" in i:
                     ctr += 1
-                    print("add 1 in +2")
 
             if i in black_cards:
                 ctr += 1
-                print("add 1 in wild card")
+
+            # for j in range(10):
+            #     if "red" in pc:
+            #         space_loc = 8
+            #     elif "blue" in pc:
+            #         space_loc = 23
+            #     elif "green" or "yellow" in pc:
+            #         space_loc = 16
+            #     if str(j) in pc[space_loc:] and "+2" not in pc[space_loc:]:
+            #         if "red" in i:
+            #             space_loc = 8
+            #         elif "blue" in i:
+            #             space_loc = 23
+            #         elif "green" or "yellow" in i:
+            #             space_loc = 16
+            #         if str(j) in i[space_loc:] and "+2" not in i[space_loc:]:
+            #             ctr += 1
 
             for j in range(10):
                 if "red" in pc:
-                    space_loc = 8
+                    space_loc = 5
                 elif "blue" in pc:
-                    space_loc = 23
-                elif "green" or "yellow" in pc:
-                    space_loc = 16
+                    space_loc = 18
+                elif "green" in pc or "yellow" in pc:
+                    space_loc = 14
                 if str(j) in pc[space_loc:] and "+2" not in pc[space_loc:]:
                     if "red" in i:
-                        space_loc = 8
+                        space_loc = 6
                     elif "blue" in i:
-                        space_loc = 23
-                    elif "green" or "yellow" in i:
-                        space_loc = 16
-                    if str(j) in i[space_loc:]:
+                        space_loc = 18
+                    elif "green" in i or "yellow" in i:
+                        space_loc = 12
+                    if str(j) in i[space_loc:] and "+2" not in i[space_loc:]:
                         ctr += 1
-                        print("add 1 in", str(j))
 
     if ctr > 0:
         return True
     return False
 
 
-def next_turn(ct, is_reverse=False):
+def next_turn(ct, to, is_reverse=False):
     if is_reverse:
-        if ct == "1":
-            return "4"
-        elif ct == "2":
-            return "1"
-        elif ct == "3":
-            return "2"
-        elif ct == "4":
-            return "3"
+        if ct == to[0]:
+            return to[3]
+        elif ct == to[1]:
+            return to[0]
+        elif ct == to[2]:
+            return to[1]
+        elif ct == to[3]:
+            return to[2]
     else:
-        if ct == "1":
-            return "2"
-        elif ct == "2":
-            return "3"
-        elif ct == "3":
-            return "4"
-        elif ct == "4":
-            return "1"
+        if ct == to[0]:
+            return to[1]
+        elif ct == to[1]:
+            return to[2]
+        elif ct == to[2]:
+            return to[3]
+        elif ct == to[3]:
+            return to[0]
 
 
 def opponent_move(hm, oh, pc):
     if hm:
-        print("played card in opponent: ", pc)
         space_loc = 0
         for i in oh:
             space_loc = 0
             if "red" in pc:
                 if "red" in i:
                     played_card = i
-                    player2_hand.remove(i)
-                    print("greg move", played_card)
-                    print("greg cards: ", len(player2_hand))
+                    oh.remove(i)
                     return i
 
             elif "blue" in pc:
                 if "blue" in i:
                     played_card = i
-                    player2_hand.remove(i)
-                    print("greg move", played_card)
-                    print("greg cards: ", len(player2_hand))
+                    oh.remove(i)
                     return i
 
             elif "green" in pc:
                 if "green" in i:
                     played_card = i
-                    player2_hand.remove(i)
-                    print("greg move", played_card)
-                    print("greg cards: ", len(player2_hand))
+                    oh.remove(i)
                     return i
 
             elif "yellow" in pc:
                 if "yellow" in i:
                     played_card = i
-                    player2_hand.remove(i)
-                    print("greg move", played_card)
-                    print("greg cards: ", len(player2_hand))
+                    oh.remove(i)
                     return i
 
             elif "skip" in pc:
                 # do a skip function
                 if "skip" in i:
                     played_card = i
-                    player2_hand.remove(i)
+                    oh.remove(i)
                     print("greg move", played_card)
                     print("greg cards: ", len(player2_hand))
                     return i
@@ -268,47 +272,56 @@ def opponent_move(hm, oh, pc):
                 # do a reverse function
                 if "reverse" in i:
                     played_card = i
-                    player2_hand.remove(i)
-                    print("greg move", played_card)
-                    print("greg cards: ", len(player2_hand))
+                    oh.remove(i)
                     return i
 
             elif "+2" in pc:
                 # do a reverse function
                 if "+2" in i:
                     played_card = i
-                    player2_hand.remove(i)
-                    print("greg move", played_card)
-                    print("greg cards: ", len(player2_hand))
+                    oh.remove(i)
                     return i
 
             if i in black_cards:
                 played_card = i
-                player2_hand.remove(i)
-                print("greg move", played_card)
-                print("greg cards: ", len(player2_hand))
+                oh.remove(i)
                 return i
-                print("add 1 in wild card")
+
+            # for j in range(10):
+            #     if "red" in pc:
+            #         space_loc = 8
+            #     elif "blue" in pc:
+            #         space_loc = 23
+            #     elif "green" or "yellow" in pc:
+            #         space_loc = 16
+            #     if str(j) in pc[space_loc:] and "+2" not in pc[space_loc:]:
+            #         if "red" in i:
+            #             space_loc = 8
+            #         elif "blue" in i:
+            #             space_loc = 23
+            #         elif "green" or "yellow" in i:
+            #             space_loc = 16
+            #         if str(j) in i[space_loc:] and "+2" not in i[space_loc:]:
+            #             played_card = i
+            #             oh.remove(i)
+            #             return i
 
             for j in range(10):
                 if "red" in pc:
-                    space_loc = 8
+                    space_loc = 5
                 elif "blue" in pc:
-                    space_loc = 23
-                elif "green" or "yellow" in pc:
-                    space_loc = 16
+                    space_loc = 18
+                elif "green" in pc or "yellow" in pc:
+                    space_loc = 14
                 if str(j) in pc[space_loc:] and "+2" not in pc[space_loc:]:
                     if "red" in i:
-                        space_loc = 8
+                        space_loc = 6
                     elif "blue" in i:
-                        space_loc = 23
-                    elif "green" or "yellow" in i:
-                        space_loc = 16
-                    if str(j) in i[space_loc:]:
-                        played_card = i
-                        player2_hand.remove(i)
-                        print("greg move", played_card)
-                        print("greg cards: ", len(player2_hand))
+                        space_loc = 18
+                    elif "green" in i or "yellow" in i:
+                        space_loc = 12
+                    if str(j) in i[space_loc:] and "+2" not in i[space_loc:]:
+                        oh.remove(i)
                         return i
 
 
@@ -326,6 +339,7 @@ turn_order = []
 turn_place = -1
 turns = ["1", '2', "3", "4"]
 current_turn = ""
+istrue = True
 
 # turn order
 for i in range(4):
@@ -334,6 +348,8 @@ for i in range(4):
     turns.remove(turn_order[turn_place])
 
 # initialization of lists
+numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
 red_cards = [Back.RED + " red 0 "] \
     + [Back.RED + " red 1 "] * 2 \
     + [Back.RED + " red 2 "] * 2 \
@@ -424,26 +440,134 @@ print("player 2 hand: ", len(player2_hand))
 print("player 3 hand: ", len(player3_hand))
 print("player 4 hand: ", len(player4_hand))
 
-# initial round
-print("initial card: ", played_card)
+turn = turn_order[0]
 
-# player move
-show_current_hand()
-played_card = player_turn(has_move(player_hand, played_card), player_move, played_card)
-if played_card is None:
-    played_card = played_card_backup
-print(played_card)
+while istrue:
+# for i in range(2):
+    # initial round
+    print("initial card: ", played_card)
 
-# opponent 2 move
-print(f"Greg cards: {len(player2_hand)}")
-if has_move(player2_hand, played_card):
-    played_card = opponent_move(has_move, player2_hand, played_card)
-    if played_card is None:
-        played_card = played_card_backup
-else:
-    player2_hand.append(draw())
-    for i in player2_hand:
-        if has_move(i, player2_hand):
-            played_card = player2_hand.pop()
-            print(played_card, "\n")
-    print(f"Greg cards: {len(player2_hand)}")
+    # player move
+    if turn == "1":
+        hm = has_move(player_hand, played_card)
+        if hm:
+            show_current_hand()
+            move = input("Enter Move: ")
+            for i in move:
+                while i in numbers:
+                    move = input("Wrong input, Enter move again: ")
+                    i = move
+                break
+            while equivalent(move) >= len(player_hand) or equivalent(move) <= -1:
+                move = input("Wrong input, enter move again: ")
+            player_move = player_hand[equivalent(move)]
+            played_card = player_turn(hm, player_move, played_card, played_card_backup)
+
+            # when card doesnt match
+            while played_card == "mismatch":
+                move = input("Enter Move: ")
+                for i in move:
+                    while i in numbers:
+                        move = input("Wrong input, Enter move again: ")
+                        i = move
+                    break
+                while equivalent(move) >= len(player_hand) or equivalent(move) <= -1:
+                    move = input("Wrong input, enter move again: ")
+                player_move = player_hand[equivalent(move)]
+                played_card = played_card_backup
+                played_card = player_turn(hm, player_move, played_card, played_card_backup)
+
+            if played_card is None:
+                played_card = played_card_backup
+            print(played_card)
+
+        else:
+            player_hand.append(draw())
+            if has_move(player_hand, played_card):
+                played_card = player_hand.pop()
+                print(played_card, "\n")
+                print(played_card)
+            show_current_hand()
+
+        if len(cards) < 1:
+            cards += all_cards
+
+        turn = next_turn(turn, turn_order)
+
+    # opponent 2 move
+    elif turn == "2":
+        print(f"Greg cards: {len(player2_hand)}")
+        if has_move(player2_hand, played_card):
+            played_card = opponent_move(has_move, player2_hand, played_card)
+            print("greg move", played_card)
+            print("greg cards: ", len(player2_hand))
+            if played_card is None:
+                played_card = played_card_backup
+        else:
+            player2_hand.append(draw())
+            for i in player2_hand:
+                if has_move(i, player2_hand):
+                    played_card = player2_hand.pop()
+                    print(played_card, "\n")
+            print(f"Greg cards: {len(player2_hand)}")
+
+        if len(cards) < 1:
+            cards += all_cards
+
+        turn = next_turn(turn, turn_order)
+
+# opponent 3 move
+    elif turn == "3":
+        print(f"mikey cards: {len(player3_hand)}")
+        if has_move(player3_hand, played_card):
+            played_card = opponent_move(has_move, player3_hand, played_card)
+            print("mikey move", played_card)
+            print("mikey cards: ", len(player3_hand))
+            if played_card is None:
+                played_card = played_card_backup
+        else:
+            player3_hand.append(draw())
+            for i in player3_hand:
+                if has_move(i, player3_hand):
+                    played_card = player3_hand.pop()
+                    print(played_card, "\n")
+            print(f"mikey cards: {len(player3_hand)}")
+
+        if len(cards) < 1:
+            cards += all_cards
+
+        turn = next_turn(turn, turn_order)
+
+    # opponent 4 move
+    elif turn == "4":
+        print(f"jorge cards: {len(player4_hand)}")
+        if has_move(player4_hand, played_card):
+            played_card = opponent_move(has_move, player4_hand, played_card)
+            print("jorge move", played_card)
+            print("jorge cards: ", len(player4_hand))
+            if played_card is None:
+                played_card = played_card_backup
+        else:
+            player4_hand.append(draw())
+            for i in player4_hand:
+                if has_move(i, player4_hand):
+                    played_card = player4_hand.pop()
+                    print(played_card, "\n")
+            print(f"jorge cards: {len(player4_hand)}")
+
+        turn = next_turn(turn, turn_order)
+
+    # terminator
+    if len(player_hand) <= 0 or len(player2_hand) <= 0 or len(player3_hand) <= 0 or len(player4_hand) <= 0:
+        if len(player_hand) <= 0:
+            print("\nYou Win!")
+        elif len(player2_hand) <= 0:
+            print("\nGreg Wins!")
+        elif len(player3_hand) <= 0:
+            print("\nMikey Wins!")
+        elif len(player4_hand) <= 0:
+            print("\nJorge Wins!")
+        istrue = False
+
+    if len(cards) < 1:
+        cards += all_cards
