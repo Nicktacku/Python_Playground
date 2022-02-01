@@ -324,6 +324,9 @@ def opponent_move(hm, oh, pc):
                         oh.remove(i)
                         return i
 
+def reverse():
+    pass
+
 
 player_hand = []
 player2_hand = []
@@ -340,6 +343,7 @@ turn_place = -1
 turns = ["1", '2', "3", "4"]
 current_turn = ""
 istrue = True
+reverse_turn = False
 
 # turn order
 for i in range(4):
@@ -492,7 +496,28 @@ while istrue:
         if len(cards) < 1:
             cards += all_cards
 
-        turn = next_turn(turn, turn_order)
+        if "reverse" in played_card:
+            if reverse_turn is True:
+                reverse_turn = False
+            elif reverse_turn is False:
+                reverse_turn = True
+        elif "skip" in played_card:
+            if reverse_turn is False:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn + 1 >= 4:
+                    turn = turn_order[0]
+                else:
+                    turn = turn_order[place_of_turn + 1]
+            elif reverse_turn is True:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn - 1 <= -1:
+                    turn = turn_order[3]
+                else:
+                    turn = turn_order[place_of_turn - 1]
+
+        turn = next_turn(turn, turn_order, reverse_turn)
 
     # opponent 2 move
     elif turn == "2":
@@ -514,7 +539,28 @@ while istrue:
         if len(cards) < 1:
             cards += all_cards
 
-        turn = next_turn(turn, turn_order)
+        if "reverse" in played_card:
+            if reverse_turn is True:
+                reverse_turn = False
+            elif reverse_turn is False:
+                reverse_turn = True
+        elif "skip" in played_card:
+            if reverse_turn is False:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn + 1 >= 4:
+                    turn = turn_order[0]
+                else:
+                    turn = turn_order[place_of_turn + 1]
+            elif reverse_turn is True:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn - 1 <= -1:
+                    turn = turn_order[3]
+                else:
+                    turn = turn_order[place_of_turn - 1]
+
+        turn = next_turn(turn, turn_order, reverse_turn)
 
 # opponent 3 move
     elif turn == "3":
@@ -536,7 +582,28 @@ while istrue:
         if len(cards) < 1:
             cards += all_cards
 
-        turn = next_turn(turn, turn_order)
+        if "reverse" in played_card:
+            if reverse_turn is True:
+                reverse_turn = False
+            elif reverse_turn is False:
+                reverse_turn = True
+        elif "skip" in played_card:
+            if reverse_turn is False:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn + 1 >= 4:
+                    turn = turn_order[0]
+                else:
+                    turn = turn_order[place_of_turn + 1]
+            elif reverse_turn is True:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn - 1 <= -1:
+                    turn = turn_order[3]
+                else:
+                    turn = turn_order[place_of_turn - 1]
+
+        turn = next_turn(turn, turn_order, reverse_turn)
 
     # opponent 4 move
     elif turn == "4":
@@ -555,7 +622,28 @@ while istrue:
                     print(played_card, "\n")
             print(f"jorge cards: {len(player4_hand)}")
 
-        turn = next_turn(turn, turn_order)
+        if "reverse" in played_card:
+            if reverse_turn is True:
+                reverse_turn = False
+            elif reverse_turn is False:
+                reverse_turn = True
+        elif "skip" in played_card:
+            if reverse_turn is False:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn + 1 >= 4:
+                    turn = turn_order[0]
+                else:
+                    turn = turn_order[place_of_turn + 1]
+            elif reverse_turn is True:
+                order_of_turn = "".join(turn_order)
+                place_of_turn = order_of_turn.find(turn)
+                if place_of_turn - 1 <= -1:
+                    turn = turn_order[3]
+                else:
+                    turn = turn_order[place_of_turn - 1]
+
+        turn = next_turn(turn, turn_order, reverse_turn)
 
     # terminator
     if len(player_hand) <= 0 or len(player2_hand) <= 0 or len(player3_hand) <= 0 or len(player4_hand) <= 0:
