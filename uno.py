@@ -344,6 +344,8 @@ turns = ["1", '2', "3", "4"]
 current_turn = ""
 istrue = True
 reverse_turn = False
+add2 = False
+drawiteration = 0
 
 # turn order
 for i in range(4):
@@ -496,6 +498,12 @@ while istrue:
         if len(cards) < 1:
             cards += all_cards
 
+        if add2 and "+2" not in played_card:
+            for i in range(drawiteration):
+                player_hand.append(draw())
+            add2 = False
+            drawiteration = 0
+
         if "reverse" in played_card:
             if reverse_turn is True:
                 reverse_turn = False
@@ -516,6 +524,9 @@ while istrue:
                     turn = turn_order[3]
                 else:
                     turn = turn_order[place_of_turn - 1]
+        elif "+2" in played_card:
+            add2 = True
+            drawiteration += 2
 
         turn = next_turn(turn, turn_order, reverse_turn)
 
@@ -539,6 +550,12 @@ while istrue:
         if len(cards) < 1:
             cards += all_cards
 
+        if add2 and "+2" not in played_card:
+            for i in range(drawiteration):
+                player2_hand.append(draw())
+            add2 = False
+            drawiteration = 0
+
         if "reverse" in played_card:
             if reverse_turn is True:
                 reverse_turn = False
@@ -559,6 +576,9 @@ while istrue:
                     turn = turn_order[3]
                 else:
                     turn = turn_order[place_of_turn - 1]
+        elif "+2" in played_card:
+            add2 = True
+            drawiteration += 2
 
         turn = next_turn(turn, turn_order, reverse_turn)
 
@@ -582,6 +602,12 @@ while istrue:
         if len(cards) < 1:
             cards += all_cards
 
+        if add2 and "+2" not in played_card:
+            for i in range(drawiteration):
+                player3_hand.append(draw())
+            add2 = False
+            drawiteration = 0
+
         if "reverse" in played_card:
             if reverse_turn is True:
                 reverse_turn = False
@@ -602,6 +628,9 @@ while istrue:
                     turn = turn_order[3]
                 else:
                     turn = turn_order[place_of_turn - 1]
+        elif "+2" in played_card:
+            add2 = True
+            drawiteration += 2
 
         turn = next_turn(turn, turn_order, reverse_turn)
 
@@ -622,6 +651,12 @@ while istrue:
                     print(played_card, "\n")
             print(f"jorge cards: {len(player4_hand)}")
 
+        if add2 and "+2" not in played_card:
+            for i in range(drawiteration):
+                player4_hand.append(draw())
+            add2 = False
+            drawiteration = 0
+
         if "reverse" in played_card:
             if reverse_turn is True:
                 reverse_turn = False
@@ -642,6 +677,9 @@ while istrue:
                     turn = turn_order[3]
                 else:
                     turn = turn_order[place_of_turn - 1]
+        elif "+2" in played_card:
+            add2 = True
+            drawiteration += 2
 
         turn = next_turn(turn, turn_order, reverse_turn)
 
